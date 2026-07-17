@@ -1,0 +1,924 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Yönetim Paneli - NNC Management</title>
+  <link rel="icon" href="assets/images/favicon.ico" type="image/gif" sizes="20x20">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+  
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #0b0813 0%, #17112a 50%, #05040a 100%);
+      --glass-bg: rgba(255, 255, 255, 0.04);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-hover: rgba(255, 255, 255, 0.08);
+      --text-primary: #ffffff;
+      --text-secondary: #b3b0c2;
+      --accent: #8b5cf6;
+      --accent-gradient: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+      --accent-hover: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+      --danger: #ef4444;
+      --success: #10b981;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Container styles */
+    .admin-wrapper {
+      width: 100%;
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Glassmorphism card utility */
+    .glass-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: var(--radius);
+      padding: 30px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Auth screen */
+    .auth-container {
+      max-width: 420px;
+      margin: 100px auto;
+      width: 100%;
+      text-align: center;
+    }
+
+    .auth-logo {
+      margin-bottom: 24px;
+      display: inline-block;
+    }
+
+    .auth-logo img {
+      height: 48px;
+    }
+
+    .auth-container h2 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .auth-container p {
+      color: var(--text-secondary);
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    /* Form control styling */
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 15px;
+      transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+    }
+
+    textarea.form-control {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--accent-gradient);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+      border: 1px solid var(--glass-border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 13px;
+      border-radius: 6px;
+    }
+
+    /* Main Dashboard Header */
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--glass-border);
+      margin-bottom: 10px;
+    }
+
+    .dashboard-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .user-info span {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    /* Tabs system */
+    .tabs-nav {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 12px;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 500;
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .tab-btn.active {
+      color: var(--text-primary);
+      background: var(--accent);
+      font-weight: 600;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    /* Talent List Grid */
+    .talent-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .talent-card {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+    }
+
+    .talent-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .talent-card-img {
+      height: 220px;
+      overflow: hidden;
+      position: relative;
+      background: #120e20;
+    }
+
+    .talent-card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .talent-type-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 4px 10px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .talent-type-badge.artista {
+      color: #a78bfa;
+      border-color: rgba(139, 92, 246, 0.4);
+    }
+
+    .talent-type-badge.talent {
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+
+    .talent-card-info {
+      padding: 16px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .talent-card-info h3 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .talent-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .talent-card-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: auto;
+      border-top: 1px solid var(--glass-border);
+      padding-top: 14px;
+    }
+
+    /* Notifications / Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 14px 24px;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: 500;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.success {
+      background: var(--success);
+    }
+
+    .toast.error {
+      background: var(--danger);
+    }
+
+    /* Grid layouts for form columns */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+    }
+
+    /* Image Upload Preview Box */
+    .image-upload-box {
+      border: 2px dashed var(--glass-border);
+      border-radius: var(--radius);
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      background: rgba(0, 0, 0, 0.2);
+      transition: all 0.2s ease;
+    }
+
+    .image-upload-box:hover {
+      border-color: var(--accent);
+    }
+
+    .image-upload-box input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .image-preview-container {
+      margin-top: 15px;
+      display: none;
+    }
+
+    .image-preview {
+      max-height: 200px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toast Notifications -->
+  <div id="toast" class="toast"></div>
+
+  <div class="admin-wrapper">
+    <!-- 1. Authentication View -->
+    <div id="auth-view" class="auth-container glass-card" style="display: block;">
+      <div class="auth-logo">
+        <img src="assets/images/logo-dark.svg" alt="NNC Management">
+      </div>
+      <h2>Yönetim Paneli Girişi</h2>
+      <p>Devam etmek için yönetici kimlik bilgilerinizle giriş yapın.</p>
+      
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-email">E-posta Adresi</label>
+          <input type="email" id="login-email" class="form-control" placeholder="admin@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="login-password">Şifre</label>
+          <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+          Giriş Yap <i class="fa fa-sign-in"></i>
+        </button>
+      </form>
+    </div>
+
+    <!-- 2. Main Dashboard View -->
+    <div id="dashboard-view" style="display: none;">
+      <div class="dashboard-header">
+        <div>
+          <h1>NNC Management</h1>
+          <p style="color: var(--text-secondary); font-size: 14px;">Talent & Artista Yönetim Portalı</p>
+        </div>
+        <div class="user-info">
+          <span id="user-email-display"></span>
+          <button id="logout-btn" class="btn btn-secondary btn-sm">
+            Çıkış Yap <i class="fa fa-sign-out"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="tabs-nav">
+        <button class="tab-btn active" onclick="switchTab('list-tab')">Oyuncular & Sanatçılar</button>
+        <button class="tab-btn" onclick="switchTab('form-tab')">Yeni Profil Ekle</button>
+      </div>
+
+      <!-- Tab A: Talent List -->
+      <div id="list-tab" class="tab-content active">
+        <div class="glass-card">
+          <h2 style="margin-bottom: 20px; font-size: 20px; font-weight: 600;">Profil Listesi</h2>
+          <div id="talent-list-container" class="talent-grid">
+            <!-- Dynamic items load here -->
+            <p style="color: var(--text-secondary)">Yükleniyor...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab B: Add / Edit Form -->
+      <div id="form-tab" class="tab-content">
+        <div class="glass-card">
+          <h2 id="form-title" style="margin-bottom: 20px; font-size: 20px; font-weight: 600;">Yeni Oyuncu / Sanatçı Ekle</h2>
+          
+          <form id="talent-form">
+            <input type="hidden" id="talent-id">
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="talent-name">İsim Soyisim</label>
+                <input type="text" id="talent-name" class="form-control" placeholder="Örn: Ömer Eren Taşkeser" required>
+              </div>
+              <div class="form-group">
+                <label for="talent-slug">URL Adresi (Slug)</label>
+                <input type="text" id="talent-slug" class="form-control" placeholder="Örn: omer-eren-taskeser" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="talent-type">Kategori</label>
+                <select id="talent-type" class="form-control" required>
+                  <option value="artista">Artista (Sanatçı)</option>
+                  <option value="talent">Talent (Oyuncu / Model)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="talent-yas">Yaş</label>
+                <input type="text" id="talent-yas" class="form-control" placeholder="Örn: 25 veya 1999">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="talent-boy">Boy (cm)</label>
+                <input type="text" id="talent-boy" class="form-control" placeholder="Örn: 185 cm">
+              </div>
+              <div class="form-group">
+                <label for="talent-kilo">Kilo (kg)</label>
+                <input type="text" id="talent-kilo" class="form-control" placeholder="Örn: 78 kg">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="talent-goz">Göz Rengi</label>
+                <input type="text" id="talent-goz" class="form-control" placeholder="Örn: Ela">
+              </div>
+              <div class="form-group">
+                <label for="talent-sac">Saç Rengi</label>
+                <input type="text" id="talent-sac" class="form-control" placeholder="Örn: Kumral">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="talent-desc">Özgeçmiş / Açıklama</label>
+              <textarea id="talent-desc" class="form-control" placeholder="Kısa bir biyografi yazın..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="talent-projects">Projeler (Her satıra bir proje yazın)</label>
+              <textarea id="talent-projects" class="form-control" placeholder="Örn: Kızılcık Şerbeti&#10;Arka Sokaklar"></textarea>
+            </div>
+
+            <div class="form-row" style="margin-top: 10px; margin-bottom: 20px;">
+              <div class="form-group" style="grid-column: span 2;">
+                <label>Profil Fotoğrafı</label>
+                <div class="image-upload-box">
+                  <i class="fa fa-cloud-upload" style="font-size: 32px; color: var(--accent); margin-bottom: 10px; display: block;"></i>
+                  <span>Görsel seçmek için buraya tıklayın</span>
+                  <input type="file" id="talent-photo-file" accept="image/*">
+                </div>
+                <div id="preview-box" class="image-preview-container">
+                  <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 5px;">Seçilen Görsel Önizleme:</p>
+                  <img id="image-upload-preview" src="" class="image-preview" alt="Preview">
+                </div>
+                <input type="hidden" id="talent-image-url">
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; margin-top: 20px;">
+              <button type="submit" id="submit-btn" class="btn btn-primary">Kaydet <i class="fa fa-check"></i></button>
+              <button type="button" onclick="cancelForm()" class="btn btn-secondary">Vazgeç</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/vendor/jquery-library.js"></script>
+
+  <script type="module">
+    import { supabase } from '/assets/js/supabase.js'
+
+    // Show Notification helper
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.className = `toast show ${type}`;
+      toast.textContent = message;
+      setTimeout(() => {
+        toast.className = 'toast';
+      }, 3500);
+    }
+
+    // Checking authentication state
+    async function checkAuth() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        document.getElementById('auth-view').style.display = 'none';
+        document.getElementById('dashboard-view').style.display = 'block';
+        document.getElementById('user-email-display').textContent = session.user.email;
+        loadTalents();
+      } else {
+        document.getElementById('auth-view').style.display = 'block';
+        document.getElementById('dashboard-view').style.display = 'none';
+      }
+    }
+
+    // Handles Admin Login
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      
+      if (error) {
+        showToast(`Giriş Başarısız: ${error.message}`, 'error');
+      } else {
+        showToast('Başarıyla giriş yapıldı!');
+        checkAuth();
+      }
+    });
+
+    // Handles Logout
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await supabase.auth.signOut();
+      showToast('Oturum sonlandırıldı.');
+      checkAuth();
+    });
+
+    // Handle Image Preview
+    document.getElementById('talent-photo-file').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('image-upload-preview').src = e.target.result;
+          document.getElementById('preview-box').style.display = 'block';
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Generate slug dynamically from name
+    document.getElementById('talent-name').addEventListener('input', function(e) {
+      if (!document.getElementById('talent-id').value) { // Only auto-slug for new records
+        const nameVal = e.target.value;
+        const slugVal = nameVal
+          .toLowerCase()
+          .trim()
+          .replace(/ğ/g, 'g')
+          .replace(/ü/g, 'u')
+          .replace(/ş/g, 's')
+          .replace(/ı/g, 'i')
+          .replace(/ö/g, 'o')
+          .replace(/ç/g, 'c')
+          .replace(/[^a-z0-9 -]/g, '') 
+          .replace(/\s+/g, '-')        
+          .replace(/-+/g, '-');        
+        document.getElementById('talent-slug').value = slugVal;
+      }
+    });
+
+    // Switch Tab helper
+    window.switchTab = function(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+
+      // Find the tab button and activate it
+      const buttons = document.querySelectorAll('.tab-btn');
+      if (tabId === 'list-tab') {
+        buttons[0].classList.add('active');
+        document.getElementById('list-tab').classList.add('active');
+      } else {
+        buttons[1].classList.add('active');
+        document.getElementById('form-tab').classList.add('active');
+      }
+    }
+
+    // Cancel Form
+    window.cancelForm = function() {
+      resetForm();
+      switchTab('list-tab');
+    }
+
+    function resetForm() {
+      document.getElementById('talent-form').reset();
+      document.getElementById('talent-id').value = '';
+      document.getElementById('talent-image-url').value = '';
+      document.getElementById('preview-box').style.display = 'none';
+      document.getElementById('image-upload-preview').src = '';
+      document.getElementById('form-title').textContent = 'Yeni Oyuncu / Sanatçı Ekle';
+      document.getElementById('submit-btn').innerHTML = 'Kaydet <i class="fa fa-check"></i>';
+    }
+
+    // Load Talents List
+    async function loadTalents() {
+      const listContainer = document.getElementById('talent-list-container');
+      listContainer.innerHTML = '<p style="color: var(--text-secondary)">Yükleniyor...</p>';
+
+      const { data: talents, error } = await supabase
+        .from('talents')
+        .select('*')
+        .order('name');
+
+      if (error) {
+        listContainer.innerHTML = `<p style="color: var(--danger)">Hata: ${error.message}</p>`;
+        return;
+      }
+
+      if (talents.length === 0) {
+        listContainer.innerHTML = '<p style="color: var(--text-secondary)">Henüz hiç oyuncu kaydı bulunmamaktadır.</p>';
+        return;
+      }
+
+      listContainer.innerHTML = '';
+      talents.forEach(t => {
+        const card = document.createElement('div');
+        card.className = 'talent-card';
+        
+        const defaultImg = `upload/product_gallery/${t.slug}.png`;
+        const imgUrl = t.image_url || defaultImg;
+
+        card.innerHTML = `
+          <div class="talent-card-img">
+            <img src="${imgUrl}" onerror="this.src='assets/images/instagram/img-01.jpg'" alt="${t.name}">
+            <span class="talent-type-badge ${t.type}">${t.type === 'artista' ? 'Artista' : 'Talent'}</span>
+          </div>
+          <div class="talent-card-info">
+            <h3>${t.name}</h3>
+            <div class="talent-stats">
+              <div>Boy: <strong>${t.height || '-'}</strong></div>
+              <div>Kilo: <strong>${t.weight || '-'}</strong></div>
+              <div>Yaş: <strong>${t.age || '-'}</strong></div>
+              <div>Göz: <strong>${t.eye_color || '-'}</strong></div>
+            </div>
+            <div class="talent-card-actions">
+              <button onclick="editTalent('${t.id}')" class="btn btn-secondary btn-sm" style="flex: 1;">
+                Düzenle <i class="fa fa-edit"></i>
+              </button>
+              <button onclick="deleteTalent('${t.id}', '${t.name}')" class="btn btn-danger btn-sm" style="padding: 6px 10px;">
+                <i class="fa fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        `;
+        listContainer.appendChild(card);
+      });
+    }
+
+    // Handle Edit Talent loading
+    window.editTalent = async function(id) {
+      const { data: talent, error } = await supabase
+        .from('talents')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        showToast(`Hata: ${error.message}`, 'error');
+        return;
+      }
+
+      // Populate form fields
+      document.getElementById('talent-id').value = talent.id;
+      document.getElementById('talent-name').value = talent.name;
+      document.getElementById('talent-slug').value = talent.slug;
+      document.getElementById('talent-type').value = talent.type;
+      document.getElementById('talent-yas').value = talent.age || '';
+      document.getElementById('talent-boy').value = talent.height || '';
+      document.getElementById('talent-kilo').value = talent.weight || '';
+      document.getElementById('talent-goz').value = talent.eye_color || '';
+      document.getElementById('talent-sac').value = talent.hair_color || '';
+      document.getElementById('talent-desc').value = talent.description || '';
+      document.getElementById('talent-image-url').value = talent.image_url || '';
+      
+      // Projects formatting (converting array back to newline string)
+      if (talent.projects && Array.isArray(talent.projects)) {
+        document.getElementById('talent-projects').value = talent.projects.join('\n');
+      } else {
+        document.getElementById('talent-projects').value = '';
+      }
+
+      // Show preview image
+      if (talent.image_url) {
+        document.getElementById('image-upload-preview').src = talent.image_url;
+        document.getElementById('preview-box').style.display = 'block';
+      } else {
+        document.getElementById('preview-box').style.display = 'none';
+      }
+
+      document.getElementById('form-title').textContent = `${talent.name} Profilini Düzenle`;
+      document.getElementById('submit-btn').innerHTML = 'Güncelle <i class="fa fa-save"></i>';
+      switchTab('form-tab');
+    }
+
+    // Handles form submissions (Add / Update)
+    document.getElementById('talent-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const id = document.getElementById('talent-id').value;
+      const name = document.getElementById('talent-name').value;
+      const slug = document.getElementById('talent-slug').value;
+      const type = document.getElementById('talent-type').value;
+      const age = document.getElementById('talent-yas').value;
+      const height = document.getElementById('talent-boy').value;
+      const weight = document.getElementById('talent-kilo').value;
+      const eye_color = document.getElementById('talent-goz').value;
+      const hair_color = document.getElementById('talent-sac').value;
+      const description = document.getElementById('talent-desc').value;
+      const projectsText = document.getElementById('talent-projects').value;
+      const photoFile = document.getElementById('talent-photo-file').files[0];
+      
+      let image_url = document.getElementById('talent-image-url').value;
+
+      // Parse projects textarea into array
+      const projects = projectsText
+        .split('\n')
+        .map(item => item.trim())
+        .filter(item => item.length > 0);
+
+      try {
+        // Upload photo to Supabase storage if file is selected
+        if (photoFile) {
+          showToast('Fotoğraf yükleniyor...');
+          const fileExt = photoFile.name.split('.').pop();
+          const fileName = `${slug}_${Date.now()}.${fileExt}`;
+          const filePath = `${fileName}`;
+
+          const { error: uploadError, data } = await supabase.storage
+            .from('talent-photos')
+            .upload(filePath, photoFile, {
+              cacheControl: '3600',
+              upsert: true
+            });
+
+          if (uploadError) throw uploadError;
+
+          // Get public URL
+          const { data: { publicUrl } } = supabase.storage
+            .from('talent-photos')
+            .getPublicUrl(filePath);
+            
+          image_url = publicUrl;
+        }
+
+        const payload = {
+          name,
+          slug,
+          type,
+          age,
+          height,
+          weight,
+          eye_color,
+          hair_color,
+          description,
+          projects,
+          image_url
+        };
+
+        if (id) {
+          // Update
+          const { error } = await supabase
+            .from('talents')
+            .update(payload)
+            .eq('id', id);
+
+          if (error) throw error;
+          showToast('Profil başarıyla güncellendi!');
+        } else {
+          // Insert
+          const { error } = await supabase
+            .from('talents')
+            .insert([payload]);
+
+          if (error) throw error;
+          showToast('Profil başarıyla oluşturuldu!');
+        }
+
+        resetForm();
+        loadTalents();
+        switchTab('list-tab');
+
+      } catch (err) {
+        showToast(`Hata: ${err.message}`, 'error');
+      }
+    });
+
+    // Delete Talent
+    window.deleteTalent = async function(id, name) {
+      if (confirm(`"${name}" profilini silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`)) {
+        const { error } = await supabase
+          .from('talents')
+          .delete()
+          .eq('id', id);
+
+        if (error) {
+          showToast(`Silme Hatası: ${error.message}`, 'error');
+        } else {
+          showToast('Profil başarıyla silindi.');
+          loadTalents();
+        }
+      }
+    }
+
+    // Run Auth checks on startup
+    checkAuth();
+  </script>
+</body>
+</html>
+
