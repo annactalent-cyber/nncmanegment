@@ -36,5 +36,6 @@ dist-ssr/
 
 # Project custom ignores
 .claude/
+.mimocode/
 *.zip
 *.pdf
