@@ -17,8 +17,8 @@ function init3DCarousel() {
         let r = Math.round((cardWidth / 2) / Math.tan(Math.PI / numItems));
         // Clamp radius for optimal visual density
         const minRadius = isMobile ? 380 : 650;
-        const maxRadius = isMobile ? 600 : 950;
-        return Math.max(minRadius, Math.min(maxRadius, r + (isMobile ? 40 : 100)));
+        const maxRadius = isMobile ? 800 : 1200;
+        return Math.max(minRadius, Math.min(maxRadius, r + (isMobile ? 30 : 60)));
     }
 
     let radius = calculateRadius();
@@ -38,8 +38,8 @@ function init3DCarousel() {
     let activeIndex = 0;
 
     // HUD Counter Elements
-    const currentCounter = document.querySelector('.carousel-counter .current');
-    const totalCounter = document.querySelector('.carousel-counter .total');
+    const currentCounter = document.querySelector('.carousel-counter .current') || document.querySelector('#current-artist');
+    const totalCounter = document.querySelector('.carousel-counter .total') || document.querySelector('#total-artists');
     if (totalCounter) {
         totalCounter.textContent = String(numItems).padStart(2, '0');
     }
