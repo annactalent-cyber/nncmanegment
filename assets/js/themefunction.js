@@ -674,9 +674,17 @@ jQuery(document).on('ready', function() {
 /* -------------------------------------
 		THEME PRELOADER
 -------------------------------------- */
-jQuery(window).on('load', function () {
-	var $preloader = jQuery('#bt-preloader'),
-	$spinner = $preloader.find('.bt-preloadericon');
-	$spinner.fadeOut();
-	$preloader.delay(350).fadeOut('slow');
-});
+function hideThemePreloader() {
+	var $preloader = jQuery('#bt-preloader');
+	if ($preloader.length) {
+		$preloader.find('.bt-preloadericon').fadeOut();
+		$preloader.delay(100).fadeOut('fast');
+	}
+}
+
+if (document.readyState === 'complete') {
+	hideThemePreloader();
+} else {
+	jQuery(window).on('load', hideThemePreloader);
+	setTimeout(hideThemePreloader, 600);
+}

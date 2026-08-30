@@ -46,6 +46,25 @@
   <div id="bt-preloader">
     <div class="bt-preloadericon"></div>
   </div>
+  <script>
+    (function() {
+      function removePreloader() {
+        var p = document.getElementById('bt-preloader');
+        if (p && p.style.display !== 'none') {
+          p.style.transition = 'opacity 0.3s ease';
+          p.style.opacity = '0';
+          setTimeout(function() { p.style.display = 'none'; }, 300);
+        }
+      }
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(removePreloader, 300);
+      } else {
+        window.addEventListener('DOMContentLoaded', function() { setTimeout(removePreloader, 300); });
+        window.addEventListener('load', removePreloader);
+      }
+      setTimeout(removePreloader, 800);
+    })();
+  </script>
 
   <div id="bt-wrapper" class="bt-wrapper bt-haslayout">
     <!-- Side Nav Navigation -->
@@ -521,7 +540,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script type="module">
-    import { supabase } from '/assets/js/supabase.js'
+    import { supabase } from './assets/js/supabase.js'
 
     const talentSlugs = ['doga-taban', 'emirhan-harac', 'omer-eren-taskeser', 'zeren-cicekdagli'];
 
